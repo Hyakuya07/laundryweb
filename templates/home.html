@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <p><h1 align="center" class="h">Welcome, {{fname}}!</h1></p>
+        <h2 class="h">What would you like to do today?</h2>
+        <br>
+         <br><br>
+        
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <td><img src="data:image/png;base64,{{ piechart }}" alt="Pie Chart" ></td>
+                    <td><img src="data:image/png;base64,{{ statuses }}" alt="Table" ></td>
+                </tr>
+            </thead>
+
+        </div>
+        
+{% endblock %}

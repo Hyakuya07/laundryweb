@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create User</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #363535;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            background-color: #d4d4d4;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+            width: 80% ;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.625%;
+        }
+
+        label {
+            flex: 1;
+            color: #333;
+            text-align: left;
+            margin-right: 10px;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        input[type="tel"] {
+            flex: 2;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        #message {
+            margin-top: 10px;
+            color: red;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #message2 {
+            margin-top: 10px;
+            color: green;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("form").submit(function(event) {
+                event.preventDefault(); // Prevent the form from submitting via the browser
+
+                var fname = $("#fname").val();
+                var lname = $("#lname").val();
+                var phone = $("#phone").val();
+                var email = $("#email").val();
+                var username = $("#username").val();
+                var password = $("#password").val();
+                var confirmPassword = $("#confirmPassword").val();
+
+                if (password !== confirmPassword) {
+                    $("#message").html("Passwords do not match.");
+                    $("#message").show();
+                    return;
+                }
+
+                $.post("/makeuser", {
+                    fname: fname,
+                    lname: lname,
+                    phone: phone,
+                    email: email,
+                    username: username,
+                    password: password
+                }, function(data) {
+                    if (data == "A user with same Phone No./Email/Username already exists") {
+                        $("#message").html(data);
+                        $("#message").show();
+                    }
+                    else{
+                        msg = "Account was made, You will be redirected to the Login Portal"
+                        $("#message2").html(msg);
+                        $("#message2").show();
+                        setTimeout(function(){
+                            window.location.href = data;
+                        }, 2000); // 2 seconds
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <form>
+        <div class="form-group">
+            <label for="fname">First Name:</label>
+            <input type="text" id="fname" name="fname" required>
+        </div>
+        <div class="form-group">
+            <label for="lname">Last Name:</label>
+            <input type="text" id="lname" name="lname" required>
+        </div>
+        <div class="form-group">
+            <label for="phone">Phone No.:</label>
+            <input type="tel" id="phone" name="phone" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email Address:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <div class="form-group">
+            <label for="confirmPassword">Confirm Password:</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required>
+        </div>
+        <input type="submit" value="Create User">
+        <div id="message"></div>
+        <div id="message2"></div>
+    </form>
+</body>
+</html>

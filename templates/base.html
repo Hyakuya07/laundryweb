@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}This Webpage{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+        .menu {
+            display: none; /* Hide the sidebar initially */
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 25%;
+            background-color: #292929b6;
+            z-index: 999;
+        }
+
+        .menu a {
+            text-decoration: none;
+            margin-top: 12px;
+            color: rgb(255, 255, 255);
+            transition: 0.3s;
+            text-align: center;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 25px;
+        }
+
+        .menu a:hover {
+            background-color: #807e7e;
+            font-size: 37px;
+            color: #fff; /* Use the default text color on hover */
+        }
+
+        .menu a current-page :hover{
+            font-size: 12px;
+        }
+
+        .modal-overlay {
+            display: none; /* Hide the overlay initially */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+        }
+
+        .open-btn {
+            position: fixed;
+            top: 2%;
+            left: 3.5%;
+            font-size: 250%;
+            cursor: pointer;
+            z-index: 1000;
+        }
+    </style>
+    <style>
+        .container {
+            background-color: #d4d4d4;
+            padding: 20px;
+            text-align: center;
+            position: absolute;
+            width: 100%;
+            height: 100%; /* Ensure the container fits within the remaining width */
+           
+        }
+        .h{
+            font-family: 'Times New Roman', Times, serif;
+            color: #474747;
+        }
+        .content {
+            margin-bottom: 20px;
+        }
+    </style>
+
+    <style type="text/css">
+        body {
+            background: #d4d4d4;
+            font-family: 'Open Sans', sans-serif;
+        }
+        .table-wrapper {
+            width: 100%;
+            margin: 30px auto;
+            padding: 20px;
+            box-shadow: 0 1px 1px rgba(0,0,0,.05);
+        }
+        .table-title {
+            padding-bottom: 10px;
+            margin: 0 0 10px;
+        }
+        .table-title h2 {
+            margin: 6px 0 0;
+            font-size: 22px;
+        }
+        .table-title .add-new {
+            float: right;
+            height: 30px;
+            font-weight: bold;
+            font-size: 12px;
+            text-shadow: none;
+            min-width: 100px;
+            border-radius: 50px;
+            line-height: 13px;
+        }
+        .table-title .add-new i {
+            margin-right: 4px;
+        }
+        table.table {
+            table-layout: fixed;
+        }
+        table.table thead tr td{
+            background-color: #474747;
+            color: #d4d4d4;
+            align-content: center;
+        }
+        table.table tr td {
+            align-content: center;
+            border-color: #e9e9e9;
+        }
+        table.table th i {
+            font-size: 13px;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+        table.table th:last-child {
+            width: 100px;
+        }
+        table.table td a {
+            cursor: pointer;
+            display: inline-block;
+            margin: 0 5px;
+            min-width: 24px;
+        }
+        table.table td a.add {
+            color: #27C46B;
+        }
+        table.table td a.edit {
+            color: #FFC107;
+        }
+        table.table td a.delete {
+            color: #E34724;
+        }
+        table.table td i {
+            font-size: 19px;
+            
+        }
+        table.table td a.add i {
+            font-size: 24px;
+            margin-right: -1px;
+            position: relative;
+            top: 3px;
+        }
+        table.table .form-control {
+            height: 32px;
+            line-height: 32px;
+            box-shadow: none;
+            border-radius: 2px;
+        }
+        table.table .form-control.error {
+            border-color: #f50000;
+        }
+        table.table td .add {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="open-btn">
+        <i class="fas fa-bars"></i>
+    </div>
+
+    <div class="modal-overlay"></div>
+
+    <div class="menu" id="sidebar">
+        <br><a href="/" class="{% if request.path == '/' %}current-page{% endif %}">Home</a> <br>
+        <a href="/expense" class="{% if request.path == '/expense' %}current-page{% endif %}">Expenses</a><br>
+        {% if session.role %}
+        <a href="/users" class="{% if request.path == '/users' %}current-page{% endif %}">Customers</a><br>
+        {% endif %}
+        {% if session.role %}
+        <a href="/orders" class="{% if request.path == '/orders' %}current-page{% endif %}">Orders</a><br>
+        {% endif %}
+        {% if session.role %}
+        <a href="/services" class="{% if request.path == '/services' %}current-page{% endif %}">Services</a><br>
+        {% endif %}
+        <a href="/ordernow" class="{% if request.path == '/ordernow' %}current-page{% endif %}">Place Order</a><br>
+        {% if session.role %}
+        <a href="/income" class="{% if request.path == '/income' %}current-page{% endif %}">Income</a><br>
+        {% endif %}
+        <a href="{{ url_for('logout') }}">Logout</a><br>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const openBtn = document.querySelector('.open-btn');
+            const modalOverlay = document.querySelector('.modal-overlay');
+            const sidebar = document.getElementById('sidebar');
+
+            openBtn.addEventListener('click', function() {
+                modalOverlay.style.display = 'block';
+                sidebar.style.display = 'flex';
+            });
+
+            modalOverlay.addEventListener('click', function() {
+                modalOverlay.style.display = 'none';
+                sidebar.style.display = 'none';
+            });
+        });
+    </script>
+
+    <!-- Your content -->
+    {% block content %}{% endblock %}
+</body>
+</html>

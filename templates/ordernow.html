@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Order Services{% endblock %}
+
+{% block content %}
+
+{% block scripts %}
+<script type="text/javascript">
+    $(document).ready(function() {
+        // Function to calculate and update total price
+        function updateTotalPrice() {
+            var totalPrice = 0;
+            $("input[type='checkbox']:checked").each(function() {
+                var servicePrice = parseFloat($(this).closest("tr").find(".service-price").text());
+                if (!isNaN(servicePrice)) {
+                    totalPrice += servicePrice;
+                }
+            });
+            $("#total-price").text(totalPrice.toFixed(2)); // Display total price rounded to 2 decimal places
+        }
+
+        // Trigger updateTotalPrice on checkbox change
+        $(document).on("change", "input[type='checkbox']", function() {
+            updateTotalPrice();
+        });
+
+        // AJAX function to place order
+        function ajax_placeorder(selectedServices) {
+            $.ajax({
+                type: "POST",
+                url: "/ajax_placeorder",
+                data: JSON.stringify({ selected_services: selectedServices }),
+                contentType: "application/json",
+                success: function(response) {
+                    $("#displaymessage").html(response);
+                    $("#displaymessage").show();
+                },
+                error: function(error) {
+                    console.error("Error placing order:", error);
+                }
+            });
+        }
+
+        // Form submission handling
+        $("#submitForm").submit(function(event) {
+            event.preventDefault();
+            var selectedServices = [];
+            $("input[name='selected_services[]']:checked").each(function() {
+                selectedServices.push($(this).val());
+            });
+            if (selectedServices.length > 0) {
+                ajax_placeorder(selectedServices);
+                setTimeout(function(){
+                    // Force a reload from the server
+                    window.location.reload(true);
+                }, 700); // 700 milliseconds = 0.7 seconds
+            } else {
+                alert("Please select at least one service.");
+            }
+        });
+    });
+</script>
+{% endblock %}
+
+<body>
+    <div class="container">
+        <p><h1 align="center" class="h">Ordering Services</h1></p>
+        <div class="table-wrapper">
+            <div class="table-title">
+                <div class="row">
+                    <div class="col-sm-8"><h2><b></b></h2></div>
+                    <div class="col-sm-4">
+                        <form id="submitForm">
+                            <div class="col-sm-8"></div><button type="submit" class="btn btn-info"><i class="fa fa-check"></i> Submit</button>
+                        </form>
+                    </div>
+                    <div class='btn btn-info' id="displaymessage" style="display:none;width:100%;margin-top:10px;"></div>
+                </div>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <td>ServiceID</td>
+                        <td>Service Name</td>
+                        <td>Price</td>
+                        <td>Select</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in services %}    
+                    <tr>
+                        <td>{{ row.serviceid }}</td>
+                        <td>{{ row.sname }}</td>
+                        <td class="service-price">{{ row.price }}</td>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="service{{ row.serviceid }}" name="selected_services[]" value="{{ row.serviceid }}">
+                                <label class="form-check-label" for="service{{ row.serviceid }}"></label>
+                            </div>
+                        </td>
+                    </tr>   
+                    {% endfor %}    
+                </tbody>
+            </table>
+            <div class="col-sm-8"></div><h2>Total Price : <span id="total-price">0.00</span></h2>
+        </div>
+    </div>     
+</body>
+
+{% endblock %}

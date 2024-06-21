@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}Service Management{% endblock %}
+
+{% block content %}
+<style>
+
+    .table special {
+
+        background: #474747;
+        color: #d4d4d4;
+        display: flex;
+        justify-content: space-around;
+        width: 100%;
+        height: 7vh;
+    }
+
+
+</style>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+        var actions = $("table td:last-child").html();
+
+        // Append table with add row form on add new button click
+        $(".add-new").click(function(){
+            $(this).attr("disabled", "disabled");
+            var index = $("table tbody tr:last-child").index();
+            var row = '<tr>' +
+                '<td><input type="text" class="form-control" name="serviceid" id="txtserviceid"></td>' +
+                '<td><input type="text" class="form-control" name="sname" id="txtsname"></td>' +
+                '<td><input type="text" class="form-control" name="price" id="txtprice"></td>' +
+                '<td>' + actions + '</td>' +
+            '</tr>';
+            $("table").append(row);  
+            $("table tbody tr").eq(index + 1).find(".add, .edit, .delete").toggle();
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+      
+        // Add row on add button click
+        $(document).on("click", ".add", function(){
+            var empty = false;
+            var input = $(this).parents("tr").find('input[type="text"]');
+            input.each(function(){
+                if(!$(this).val()){
+                    $(this).addClass("error");
+                    empty = true;
+                } else{
+                    $(this).removeClass("error");
+                }
+            });
+            var txtserviceid = $("#txtserviceid").val();
+            var txtsname = $("#txtsname").val();
+            var txtprice = $("#txtprice").val();
+            // Example POST request to server - replace with actual implementation
+            $.post("/ajax_add3", { txtserviceid: txtserviceid, txtsname: txtsname, txtprice: txtprice}, function(data) {
+                $("#displaymessage").html(data);
+                $("#displaymessage").show();
+            });
+            $(this).parents("tr").find(".error").first().focus();
+            if(!empty){
+                input.each(function(){
+                    $(this).parent("td").html($(this).val());
+                });   
+                $(this).parents("tr").find(".add, .edit").toggle();
+                $(".add-new").removeAttr("disabled");
+            }
+        });
+        
+        // Delete row on delete button click
+        $(document).on("click", ".delete", function(){
+            var txtserviceid = $(this).attr("id");
+            $(this).parents("tr").remove();
+            $(".add-new").removeAttr("disabled");
+            // Example POST request to server - replace with actual implementation
+            $.post("/ajax_delete3", {txtserviceid: txtserviceid}, function(data) {
+                $("#displaymessage").html(data);
+                $("#displaymessage").show();
+            });
+        });
+
+        // Update row on update button click
+        $(document).on("click", ".update", function(){
+            var txtserviceid = $("#txtserviceid").val();
+            var txtsname = $("#txtsname").val();
+            var txtprice = $("#txtprice").val();
+            $.post("/ajax_update3", { txtserviceid: txtserviceid, txtsname: txtsname, txtprice: txtprice }, function(data) {
+                $("#displaymessage").html(data);
+                $("#displaymessage").show();
+            });
+            setTimeout(function(){
+                    // Force a reload from the server
+                    window.location.reload(true);
+                }, 700); // 700 milliseconds = 0.7 seconds
+        });
+
+        // Edit row on edit button click
+        $(document).on("click", ".edit", function(){  
+            $(this).parents("tr").find("td:not(:last-child)").each(function(i){
+                var idname;
+                if (i == 0) {
+                    idname = 'txtserviceid';
+                } else if (i == 1) {
+                    idname = 'txtsname';
+                } else if (i == 2) {
+                    idname = 'txtprice';
+                }
+                $(this).html('<input type="text" name="updaterec" id="' + idname + '" class="form-control" value="' + $(this).text() + '">');
+            });  
+            $(this).parents("tr").find(".add, .edit").toggle();
+            $(".add-new").attr("disabled", "disabled");
+            $(this).parents("tr").find(".add").removeClass("add").addClass("update"); 
+        });
+    });
+</script>
+
+</head>
+<body>
+    <div class="container">
+        <p><h1 align="center" class="h">Services</h1></p>
+        <div class="table-wrapper">
+            <div class="table-title">
+                <div class="row">
+                    <div class="col-sm-8"><h2><b></b></h2></div>
+                    <div class="col-sm-4">
+                        <button type="button" class="btn btn-info add-new"><i class="fa fa-plus"></i> Add New</button>
+                    </div>
+                    <div class='btn btn-info' id="displaymessage" style="display:none;width:100%;margin-top:10px;"></div>
+                </div>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <td>ServiceID</td>
+                        <td>Service Name</td>
+                        <td>Price</td>
+                        <td>Actions</td>
+                        <th hidden>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in services %}    
+                    <tr>
+                        <td>{{ row.serviceid }}</td>
+                        <td>{{ row.sname }}</td>
+                        <td>{{ row.price }}</td>
+                        <td>
+                            <a class="add" title="Add" data-toggle="tooltip" id="{{ row.serviceid }}"><i class="fa fa-user-plus"></i></a>
+                            <a class="edit" title="Edit" data-toggle="tooltip" id="{{ row.serviceid }}"><i class="fa fa-pencil"></i></a>
+                            <a class="delete" title="Delete" data-toggle="tooltip" id="{{ row.serviceid }}"><i class="fa fa-trash-o"></i></a>
+                        </td>
+                    </tr>   
+                    {% endfor %}    
+                </tbody>
+            </table>
+        </div>
+    </div>     
+</body>
+</html> 
+{% endblock %}

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #363535;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            background-color: #d4d4d4;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            display: flex;
+            flex-direction: column; /* Align form items vertically */
+        }
+
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        label {
+            flex: 1;
+            color: #333;
+            text-align: left; /* Align labels to the left */
+            margin-right: 10px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            flex: 2;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;  
+        }
+
+        #loginMessage {
+            margin-top: 10px;
+            color: red;
+            display: none;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("form").submit(function(event) {
+                event.preventDefault(); // Prevent the form from submitting via the browser
+
+                var username = $("#username").val();
+                var password = $("#password").val();
+
+                $.post("/ajax_login", { username: username, password: password }, function(data) {
+                    if(data == "Invalid Credentials"){
+                        $("#loginMessage").html(data);
+                        $("#loginMessage").show();
+                    }else {
+                        window.location.href = data;
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <form>
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <input type="submit" value="Login">
+        <div id="loginMessage"></div>
+        <br><br>
+        <a href="/newuser" align = "left">Register</a>
+        
+    </form>
+</body>
+</html>

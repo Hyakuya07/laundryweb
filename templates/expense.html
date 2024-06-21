@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Expenses{% endblock %}
+
+{% block content %}
+<style>
+    /* Custom CSS for modal overlay */
+    .modal-overlay2 {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+        z-index: 1000; /* Ensure it's on top of other content */
+    }
+
+    .modal-content2 {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        z-index: 1001; /* Ensure it's above the overlay */
+    }
+
+    .modal-close2 {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+    }
+</style>
+<script>
+    $(document).on("click", ".bill", function(){
+        var txtorderid = $(this).attr("id");
+        $.post("/ajax_bill", {txtorderid: txtorderid}, function(data) {
+            // Show modal overlay and display bill image
+            $('.modal-overlay2').show();
+            $('#billImage').attr('src', 'data:image/png;base64,' + data);
+        });
+    });
+
+    $(document).on("click", ".modal-overlay2", function(){
+        // Hide modal overlay when clicked outside the modal content
+        $('.modal-overlay2').hide();
+    });
+</script>
+
+    <div class="container">
+        <h2 class="h">Expense History</h2>
+        <div class="table-wrapper">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <td>OrderID</td>
+                        <td>Status</td>
+                        <td>Amount Paid</td>
+                        <td>Order Placed On</td>
+                        <td>Bill</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in expenses %}    
+                    <tr>
+                        <td>{{ row.orderid }}</td>
+                        <td>{{ row.status }}</td>
+                        <td>{{ row.paid }}</td>
+                        <td>{{ row.dateplaced }}</td>
+                        <td><a class="bill" title="Show Bill" data-toggle="tooltip" id="{{ row.orderid }}"><i class="fa fa-file"></i></a></td>
+                    </tr>   
+                    {% endfor %}    
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal overlay -->
+    <div class="modal-overlay2">
+        <!-- Modal content -->
+        <div class="modal-content2">
+            <span class="modal-close2">&times;</span>
+            <img id="billImage" src="" alt="Bill">
+        </div>
+    </div>
+
+{% endblock %}

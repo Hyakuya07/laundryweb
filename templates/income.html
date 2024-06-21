@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Income{% endblock %}
+
+{% block content %}
+
+
+
+        <div class="container">
+            <h2 class="h">Income History</h2>
+            
+            <div class="table-wrapper">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <td>OrderID</td>
+                            <td>Status</td>
+                            <td>User</td>
+                            <td>Amount Paid</td>
+                            <td>Order Placed On</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in income %}    
+                        <tr>
+                            <td>{{ row.orderid }}</td>
+                            <td>{{ row.status }}</td>
+                            <td>{{ row.user }}</td>
+                            <td>{{ row.paid }}</td>
+                            <td>{{ row.dateplaced }}</td>
+                        </tr>   
+                        {% endfor %}    
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+{% endblock %}
