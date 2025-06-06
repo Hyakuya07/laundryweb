@@ -32,11 +32,11 @@
                 '<td><input type="text" class="form-control" name="price" id="txtprice"></td>' +
                 '<td>' + actions + '</td>' +
             '</tr>';
-            $("table").append(row);  
+            $("table").append(row);
             $("table tbody tr").eq(index + 1).find(".add, .edit, .delete").toggle();
             $('[data-toggle="tooltip"]').tooltip();
         });
-      
+
         // Add row on add button click
         $(document).on("click", ".add", function(){
             var empty = false;
@@ -61,12 +61,12 @@
             if(!empty){
                 input.each(function(){
                     $(this).parent("td").html($(this).val());
-                });   
+                });
                 $(this).parents("tr").find(".add, .edit").toggle();
                 $(".add-new").removeAttr("disabled");
             }
         });
-        
+
         // Delete row on delete button click
         $(document).on("click", ".delete", function(){
             var txtserviceid = $(this).attr("id");
@@ -95,7 +95,7 @@
         });
 
         // Edit row on edit button click
-        $(document).on("click", ".edit", function(){  
+        $(document).on("click", ".edit", function(){
             $(this).parents("tr").find("td:not(:last-child)").each(function(i){
                 var idname;
                 if (i == 0) {
@@ -106,10 +106,10 @@
                     idname = 'txtprice';
                 }
                 $(this).html('<input type="text" name="updaterec" id="' + idname + '" class="form-control" value="' + $(this).text() + '">');
-            });  
+            });
             $(this).parents("tr").find(".add, .edit").toggle();
             $(".add-new").attr("disabled", "disabled");
-            $(this).parents("tr").find(".add").removeClass("add").addClass("update"); 
+            $(this).parents("tr").find(".add").removeClass("add").addClass("update");
         });
     });
 </script>
@@ -139,15 +139,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for row in services %}    
+                    {% for row in services %}
                     <tr>
-                        <td>{{ row.serviceid }}</td>
-                        <td>{{ row.sname }}</td>
-                        <td>{{ row.price }}</td>
+                        <td>{{ row.ServiceID }}</td>
+                        <td>{{ row.ServiceName }}</td>
+                        <td>{{ row.Price }}</td>
                         <td>
-                            <a class="add" title="Add" data-toggle="tooltip" id="{{ row.serviceid }}"><i class="fa fa-user-plus"></i></a>
-                            <a class="edit" title="Edit" data-toggle="tooltip" id="{{ row.serviceid }}"><i class="fa fa-pencil"></i></a>
-                            <a class="delete" title="Delete" data-toggle="tooltip" id="{{ row.serviceid }}"><i class="fa fa-trash-o"></i></a>
+                            <a class="add" title="Add" data-toggle="tooltip" id="{{ row.ServiceID }}"><i class="fa fa-user-plus"></i></a>
+                            <a class="edit" title="Edit" data-toggle="tooltip" id="{{ row.ServiceID }}"><i class="fa fa-pencil"></i></a>
+                            <a class="delete" title="Delete" data-toggle="tooltip" id="{{ row.ServiceID }}"><i class="fa fa-trash-o"></i></a>
                         </td>
                     </tr>   
                     {% endfor %}    

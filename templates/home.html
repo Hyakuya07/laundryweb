@@ -5,6 +5,11 @@
 {% block content %}
     <div class="container">
         <p><h1 align="center" class="h">Welcome, {{fname}}!</h1></p>
+        {% if msg %}
+            <h2 class = "h">
+                {{ msg }}
+            </h2>
+        {% endif %}
         <h2 class="h">What would you like to do today?</h2>
         <br>
          <br><br>

@@ -16,7 +16,7 @@
             var row = '<tr>' +
                 '<td></td>' +  // No input field for orderid
                 '<td><input type="text" class="form-control" name="user" id="txtuser"></td>' +
-                '<td><select class="form-control" name="status" id="txtstatus"><option value="Completed">Completed</option><option value="In-Progress">In-Progress</option></select></td>' +
+                '<td><select class="form-control" name="status" id="txtstatus"><option value="Completed">Completed</option><option value="In-Progress">In-Progress</option><option value="Collecting">Collecting</option><option value="Dispatched">Dispatched</option></select></td>' +
                 '<td><input type="date" class="form-control" name="dateplaced" id="txtdateplaced"></td>' +
                 '<td><input type="date" class="form-control" name="datecompletion" id="txtdatecompletion"></td>' +
                 '<td><input type="text" class="form-control" name="paid" id="txtpaid"></td>' +
@@ -76,8 +76,9 @@
         $(document).on("click", ".update", function(){
             var txtorderid = $(this).attr("id");
             var txtstatus = $(this).parents("tr").find("#txtstatus").val();
+            var txtpaid = $(this).parents("tr").find("#txtpaid").val();
             var txtdatecompletion = $(this).parents("tr").find("#txtdatecompletion").val();
-            $.post("/ajax_update", { txtorderid: txtorderid, txtstatus: txtstatus, txtdatecompletion: txtdatecompletion}, function(data) {
+            $.post("/ajax_update", { txtorderid: txtorderid, txtstatus: txtstatus, txtdatecompletion: txtdatecompletion, txtpaid:txtpaid}, function(data) {
                 $("#displaymessage").html(data);
                 $("#displaymessage").show();
             });
@@ -94,13 +95,17 @@
                     idname = 'txtorderid';
                 } else if (i == 4) {
                     idname = 'txtdatecompletion';
+                } else if (i == 5) {
+                    idname = 'txtpaid';
                 } else if (i == 2) {
                     idname = 'txtstatus';
                 }
                 if (i == 2) {
-                    $(this).html('<select name="updaterec" id="' + idname + '" class="form-control"><option value="Completed">Completed</option><option value="In-Progress">In-Progress</option></select>');
+                    $(this).html('<select name="updaterec" id="' + idname + '" class="form-control"><option value="Completed">Completed</option><option value="In-Progress">In-Progress</option><option value="Collecting">Collecting</option><option value="Dispatched">Dispatched</option></select>');
                 } else if (i == 4) {
                     $(this).html('<input type="date" name="updaterec" id="' + idname + '" class="form-control" value="' + $(this).text() + '">');
+                } else if (i == 5) {
+                    $(this).html('<select name="updaterec" id="' + idname + '" class="form-control"><option value="Paid">Paid</option><option value="Not Yet Paid">Not Yet Paid</option></select>');
                 }
             });  
             $(this).parents("tr").find(".add, .edit").toggle();
@@ -127,26 +132,28 @@
                 <thead>
                     <tr>
                         <td>OrderID</td>
-                        <td>User</td>
+                        <td>UserID</td>
                         <td>Status</td>
                         <td>Date Placed</td>
                         <td>Date of Completion</td>
                         <td>Paid</td>
+                        <td>Total</td>
                         <td>Actions</td>
                     </tr>
                 </thead>
                 <tbody>
                     {% for row in orders %}    
                     <tr>
-                        <td>{{ row.orderid }}</td>
-                        <td>{{ row.user }}</td>
-                        <td>{{ row.status }}</td>
-                        <td>{{ row.dateplaced }}</td>
-                        <td>{{ row.datecompletion }}</td>
-                        <td>{{ row.paid }}</td>
+                        <td>{{ row.OrderID }}</td>
+                        <td>{{ row.UserID }}</td>
+                        <td>{{ row.Status }}</td>
+                        <td>{{ row.DateOfPlacement }}</td>
+                        <td>{{ row.DateOfCompletion }}</td>
+                        <td>{{ row.Paid }}</td>
+                        <td>{{ row.Total }}</td>
                         <td>
-                            <a class="add" title="Add" data-toggle="tooltip" id="{{ row.orderid }}"><i class="fa fa-user-plus"></i></a>
-                            <a class="edit" title="Edit" data-toggle="tooltip" id="{{ row.orderid }}"><i class="fa fa-pencil"></i></a>
+                            <a class="add" title="Add" data-toggle="tooltip" id="{{ row.OrderID }}"><i class="fa fa-user-plus"></i></a>
+                            <a class="edit" title="Edit" data-toggle="tooltip" id="{{ row.OrderID }}"><i class="fa fa-pencil"></i></a>
                             <!-- <a class="delete" title="Delete" data-toggle="tooltip" id="{{ row.orderid }}"><i class="fa fa-trash-o"></i></a> -->
                         </td>
                     </tr>   
@@ -156,5 +163,5 @@
         </div>
     </div>     
 </body>
-</html> 
+</html>
 {% endblock %}

@@ -181,19 +181,21 @@
     <div class="menu" id="sidebar">
         <br><a href="/" class="{% if request.path == '/' %}current-page{% endif %}">Home</a> <br>
         <a href="/expense" class="{% if request.path == '/expense' %}current-page{% endif %}">Expenses</a><br>
-        {% if session.role %}
+        {% if session.role == "ADMIN"%}
         <a href="/users" class="{% if request.path == '/users' %}current-page{% endif %}">Customers</a><br>
         {% endif %}
-        {% if session.role %}
+        {% if session.role == "ADMIN" or session.role == "DSKMN" %}
         <a href="/orders" class="{% if request.path == '/orders' %}current-page{% endif %}">Orders</a><br>
         {% endif %}
-        {% if session.role %}
+        {% if session.role == "ADMIN"%}
         <a href="/services" class="{% if request.path == '/services' %}current-page{% endif %}">Services</a><br>
         {% endif %}
         <a href="/ordernow" class="{% if request.path == '/ordernow' %}current-page{% endif %}">Place Order</a><br>
-        {% if session.role %}
+        {% if session.role == "ADMIN"%}
         <a href="/income" class="{% if request.path == '/income' %}current-page{% endif %}">Income</a><br>
         {% endif %}
+        <a href="/reviews" class="{% if request.path == '/reviews' %}current-page{% endif %}">Reviews</a><br>
+
         <a href="{{ url_for('logout') }}">Logout</a><br>
     </div>
 

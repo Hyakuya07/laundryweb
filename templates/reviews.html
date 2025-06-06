@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Reviews{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="h">Customer Reviews</h1>
+
+    <!-- Form for submitting a review -->
+    <form action="/reviews" method="POST">
+        <div class="form-group">
+            <label for="order_id">Select an Order:</label>
+            <select id="order_id" name="order_id" class="form-control" required>
+                <option value="" disabled selected>Select an order</option>
+                {% for order in orders %}
+                    <option value="{{ order.OrderID }}">{{ order.OrderID }} - {{ order.DateOfPlacement }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="review_content">Review:</label><br>
+            <textarea id="review_content" name="review_content" class="form-control" rows="4" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="rating">Rating:</label>
+            <div class="rating" style="direction: rtl; unicode-bidi: bidi-override; display: inline-block; position: relative;">
+                <input type="radio" id="star5" name="rating" value="5" required style="display: none;">
+                <label for="star5" title="5 stars" class="star-label" style="font-size: 2rem; color: #ccc; cursor: pointer; text-shadow: 1px 1px #bbb; position: relative; display: inline-block;">☆</label>
+
+                <input type="radio" id="star4" name="rating" value="4" required style="display: none;">
+                <label for="star4" title="4 stars" class="star-label" style="font-size: 2rem; color: #ccc; cursor: pointer; text-shadow: 1px 1px #bbb; position: relative; display: inline-block;">☆</label>
+
+                <input type="radio" id="star3" name="rating" value="3" required style="display: none;">
+                <label for="star3" title="3 stars" class="star-label" style="font-size: 2rem; color: #ccc; cursor: pointer; text-shadow: 1px 1px #bbb; position: relative; display: inline-block;">☆</label>
+
+                <input type="radio" id="star2" name="rating" value="2" required style="display: none;">
+                <label for="star2" title="2 stars" class="star-label" style="font-size: 2rem; color: #ccc; cursor: pointer; text-shadow: 1px 1px #bbb; position: relative; display: inline-block;">☆</label>
+
+                <input type="radio" id="star1" name="rating" value="1" required style="display: none;">
+                <label for="star1" title="1 star" class="star-label" style="font-size: 2rem; color: #ccc; cursor: pointer; text-shadow: 1px 1px #bbb; position: relative; display: inline-block;">☆</label>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit Review</button>
+    </form>
+
+    <hr>
+
+    <!-- Displaying all reviews -->
+    <h2>All Reviews</h2>
+    <div class="container">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <td>Username</td>
+                    <td>Order ID</td>
+                    <td>Review</td>
+                    <td>Rating</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for review in reviews %}
+                    <tr>
+                        <td>{{ review.Username }}</td>
+                        <td>{{ review.OrderID }}</td> <!-- Display the associated OrderID -->
+                        <td>{{ review.Content }}</td>
+                        <td>
+                            <!-- Show rating as stars -->
+                            {% for i in range(review.Rating) %}
+                                ★
+                            {% endfor %}
+                            {% for i in range(5 - review.Rating) %}
+                                ☆
+                            {% endfor %}
+                        </td>
+                        <td>
+    <!-- Delete Review Form -->
+    <a class="delete" title="Delete" data-toggle="tooltip" id="{{ review.ReviewID }}"><i class="fa fa-trash-o"></i></a>
+</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.rating input').forEach((star) => {
+        star.addEventListener('change', () => {
+            document.querySelectorAll('.star-label').forEach((label) => {
+                label.style.color = '#ccc';
+            });
+            const selectedStar = star.value;
+            for (let i = 1; i <= selectedStar; i++) {
+                document.querySelector(`#star${i} + label`).style.color = '#f5a623';
+            }
+        });
+    });
+
+        $(document).on("click", ".delete", function() {
+    var reviewID = $(this).attr("id"); // This should grab the ReviewID from the 'id' attribute
+    var row = $(this).closest("tr"); // Get the closest row to the delete button
+
+    // Safety check for reviewID
+    if (!reviewID) {
+        alert("Review ID is missing!");
+        return;
+    }
+
+    // AJAX request to delete the review
+    $.ajax({
+        url: "/delete_review",
+        type: "POST",
+        data: { txtrid: reviewID }, // Send the Review ID to the server
+        success: function(response) {
+            if (response.msg === "Review deleted successfully") {
+                row.remove(); // Remove the row from the table
+            } else {
+                alert("Failed to delete review. Try again.");
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("AJAX error:", status, error); // Log detailed error
+            alert("An error occurred while deleting the review.");
+        }
+    });
+});
+
+</script>
+
+{% endblock %}

@@ -15,11 +15,12 @@
             var index = $("table tbody tr:last-child").index();
             var row = '<tr>' +
                 '<td><input type="text" class="form-control" name="user" id="txtuser"></td>' +
-                '<td><input type="text" class="form-control" name="pass" id="txtpass"></td>' +
+                '<td><input type="text" class="form-control" name="pass" id="txtrole"></td>' +
                 '<td><input type="text" class="form-control" name="email" id="txtemail"></td>' +
                 '<td><input type="text" class="form-control" name="phone" id="txtphone"></td>' +
-                '<td><input type="text" class="form-control" name="fname" id="txtfname"></td>' +
-                '<td><input type="text" class="form-control" name="lname" id="txtlname"></td>' +
+                '<td><input type="text" class="form-control" name="name" id="txtname"></td>' +
+                '<td><input type="text" class="form-control" name="address" id="txtaddress"></td>' +
+                '<td><input type="date" class="form-control" name="DOB" id="txtdob"></td>' +
                 '<td>' + actions + '</td>' +
             '</tr>';
             $("table").append(row);  
@@ -41,12 +42,13 @@
                 }
             });
             var txtuser = $("#txtuser").val();
-            var txtpass = $("#txtpass").val();
+            var txtrole = $("#txtrole").val();
             var txtemail = $("#txtemail").val();
             var txtphone = $("#txtphone").val();
-            var txtfname = $("#txtfname").val();
-            var txtlname = $("#txtlname").val();
-            $.post("/ajax_add2", { txtuser: txtuser, txtpass: txtpass, txtemail: txtemail, txtphone: txtphone, txtfname: txtfname, txtlname: txtlname}, function(data) {
+            var txtname = $("#txtname").val();
+            var txtaddress = $("#txtaddress").val();
+            var txtdob = $("#txtdob").val();
+            $.post("/ajax_add2", { txtuser: txtuser, txtrole: txtrole, txtemail: txtemail, txtphone: txtphone, txtname: txtname, txtaddress: txtaddress, txtdob: txtdob}, function(data) {
                 $("#displaymessage").html(data);
                 $("#displaymessage").show();
             });
@@ -54,12 +56,12 @@
             if(!empty){
                 input.each(function(){
                     $(this).parent("td").html($(this).val());
-                });   
+                });
                 $(this).parents("tr").find(".add, .edit").toggle();
                 $(".add-new").removeAttr("disabled");
-            }       
+            }
         });
-        
+
         // Delete row on delete button click
         $(document).on("click", ".delete", function(){
             var txtcid = $(this).attr("id");
@@ -73,14 +75,14 @@
 
         // Update row on update button click
         $(document).on("click", ".update", function(){
-            var txtuser = $("#txtuser").val();
-            var txtpass = $("#txtpass").val();
+            var txtuser = $(this).attr("id");
+            var txtrole = $("#txtrole").val();
             var txtemail = $("#txtemail").val();
             var txtphone = $("#txtphone").val();
-            var txtfname = $("#txtfname").val();
-            var txtlname = $("#txtlname").val();
-            var txtcid = $(this).attr("id");
-            $.post("/ajax_update2", { txtuser: txtuser, txtpass: txtpass, txtemail: txtemail, txtphone: txtphone, txtfname: txtfname, txtlname: txtlname, txtcid: txtcid}, function(data) {
+            var txtname = $("#txtname").val();
+            var txtaddress = $("#txtaddress").val();
+            var txtdob = $("#txtdob").val();
+            $.post("/ajax_update2", { txtuser: txtuser, txtrole: txtrole, txtemail: txtemail, txtphone: txtphone, txtname: txtname, txtaddress: txtaddress, txtdob: txtdob}, function(data) {
                 $("#displaymessage").html(data);
                 $("#displaymessage").show();
             });
@@ -96,15 +98,17 @@
                 if (i == 0) {
                     idname = 'txtuser';
                 } else if (i == 1) {
-                    idname = 'txtpass';
+                    idname = 'txtrole';
                 } else if (i == 2) {
                     idname = 'txtemail';
                 } else if (i == 3) {
                     idname = 'txtphone';
                 } else if (i == 4) {
-                    idname = 'txtfname';
+                    idname = 'txtname';
                 } else if (i == 5) {
-                    idname = 'txtlname';
+                    idname = 'txtaddress';
+                } else if (i == 6) {
+                    idname = 'txtdob';
                 }
                 $(this).html('<input type="text" name="updaterec" id="' + idname + '" class="form-control" value="' + $(this).text() + '">');
             });
@@ -132,11 +136,12 @@
                 <thead>
                     <tr>
                         <td>Username</td>
-                        <td>Password</td>
+                        <td>Role</td>
                         <td>Email</td>
                         <td>Phone</td>
-                        <td>First Name</td>
-                        <td>Last Name</td>
+                        <td>Name</td>
+                        <td>Address</td>
+                        <td>DOB</td>
                         <td>Actions</td>
                         <th hidden>Actions</th>
                     </tr>
@@ -144,16 +149,17 @@
                 <tbody>
                     {% for row in customers %}    
                     <tr>
-                        <td>{{row.user}}</td>
-                        <td>{{row.pass}}</td>
-                        <td>{{row.email}}</td>
-                        <td>{{row.phone}}</td>
-                        <td>{{row.fname}}</td>
-                        <td>{{row.lname}}</td>
+                        <td>{{row.Username}}</td>
+                        <td>{{row.Role}}</td>
+                        <td>{{row.EmailID}}</td>
+                        <td>{{row.PhoneNumber}}</td>
+                        <td>{{row.Name}}</td>
+                        <td>{{row.Address}}</td>
+                        <td>{{row.DOB}}</td>
                         <td>
-                            <a class="add" title="Add" data-toggle="tooltip" id="{{row.cid}}"><i class="fa fa-user-plus"></i></a>
-                            <a class="edit" title="Edit" data-toggle="tooltip" id="{{row.cid}}"><i class="fa fa-pencil"></i></a>
-                            <a class="delete" title="Delete" data-toggle="tooltip" id="{{row.cid}}"><i class="fa fa-trash-o"></i></a>
+                            <a class="add" title="Add" data-toggle="tooltip" id="{{row.Username}}"><i class="fa fa-user-plus"></i></a>
+                            <a class="edit" title="Edit" data-toggle="tooltip" id="{{row.Username}}"><i class="fa fa-pencil"></i></a>
+                            <a class="delete" title="Delete" data-toggle="tooltip" id="{{row.Username}}"><i class="fa fa-trash-o"></i></a>
                         </td>
                     </tr>   
                     {% endfor %}    

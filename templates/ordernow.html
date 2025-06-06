@@ -89,13 +89,13 @@
                 <tbody>
                     {% for row in services %}    
                     <tr>
-                        <td>{{ row.serviceid }}</td>
-                        <td>{{ row.sname }}</td>
-                        <td class="service-price">{{ row.price }}</td>
+                        <td>{{ row.ServiceID }}</td>
+                        <td>{{ row.ServiceName }}</td>
+                        <td class="service-price">{{ row.Price }}</td>
                         <td>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="service{{ row.serviceid }}" name="selected_services[]" value="{{ row.serviceid }}">
-                                <label class="form-check-label" for="service{{ row.serviceid }}"></label>
+                                <input class="form-check-input" type="checkbox" id="service{{ row.ServiceID }}" name="selected_services[]" value="{{ row.ServiceID }}">
+                                <label class="form-check-label" for="service{{ row.ServiceID }}"></label>
                             </div>
                         </td>
                     </tr>   
